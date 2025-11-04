@@ -1,0 +1,170 @@
+spring:
+  application:
+    name: ascholar
+  
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  
+  config:
+    import: 
+      - optional:file:./config/application-secrets.properties
+      - optional:file:./config/application-${spring.profiles.active}.properties
+  
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:ascholar_management}?createDatabaseIfNotExist=true&useSSL=${DB_USE_SSL:false}&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  jpa:
+    generate-ddl: true
+    show-sql: ${SHOW_SQL:false}
+    hibernate:
+      ddl-auto: ${DDL_AUTO:update}
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        globally_quoted_identifiers: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: false
+        connection:
+          provider_disables_autocommit: true
+  
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+    default-encoding: UTF-8
+
+# Redis Configuration
+redis:
+  host: ${REDIS_HOST:localhost}
+  port: ${REDIS_PORT:6379}
+  password: ${REDIS_PASSWORD:}
+  database: ${REDIS_DATABASE:0}
+  lettuce:
+    pool:
+      max-active: 8
+      max-idle: 8
+      min-idle: 0
+      max-wait: -1ms
+  timeout: 2000ms
+  connect-timeout: 2000ms
+
+# Server Configuration
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: ${SERVER_CONTEXT_PATH:/}
+    session:
+      timeout: 30m
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+
+# File Upload Configuration
+#spring:
+servlet:
+  multipart:
+    enabled: true
+    max-file-size: 100MB
+    max-request-size: 100MB
+    file-size-threshold: 2KB
+
+# Async Configuration
+task:
+  execution:
+    pool:
+      core-size: 5
+      max-size: 10
+      queue-capacity: 100
+    thread-name-prefix: ascholar-task-
+
+# Application Configuration
+app:
+  base-url: ${APP_BASE_URL:http://localhost:8080}
+  name: AScholar
+  version: 1.0.0
+  
+  # JWT Configuration
+  jwt:
+    secret-key: ${JWT_SECRET_KEY}
+    expiration: ${JWT_EXPIRATION:86400000}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+  
+  # Security Configuration
+  security:
+    auth-token-validity: 24h
+    max-login-attempts: 5
+    login-lockout-duration: 30m
+    password-min-length: 8
+    password-max-length: 128
+    require-special-char: true
+    require-uppercase: true
+    require-number: true
+    cors:
+      allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:8080}
+      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+      allowed-headers: "*"
+      allow-credentials: true
+  
+  # Test Configuration
+  test:
+    auto-submit-check-interval: 1m
+    high-performer-threshold: 80.00
+    max-tab-switches: 3
+    answer-submission-rate-limit: 2s
+    answer-submission-rate-limit-count: 10
+  
+  # Email Configuration
+  email:
+    from-address: ${EMAIL_FROM_ADDRESS:noreply@ascholar.com}
+    support-email: ${EMAIL_SUPPORT:support@ascholar.com}
+    from-name: ${EMAIL_FROM_NAME:AScholar Support}
+    enabled: ${EMAIL_ENABLED:true}
+  
+  # Cache Configuration
+  cache:
+    test-attempt-ttl: 30m
+    user-profile-ttl: 1h
+    rate-limit-ttl: 1h
+  
+  # Payment Configuration
+  payment:
+    currency: USD
+    processing-fee-rate: 2.9
+    fixed-fee: 0.30
+
+# Logging Configuration
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
+    org.harry.ascholar: ${APP_LOG_LEVEL:DEBUG}
+    org.springframework.security: ${SECURITY_LOG_LEVEL:WARN}
+    org.springframework.mail: ${MAIL_LOG_LEVEL:DEBUG}
+    org.springframework.cache: ${CACHE_LOG_LEVEL:WARN}
+    org.hibernate.SQL: ${HIBERNATE_SQL_LOG:WARN}
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/ascholar-app.log

@@ -1,0 +1,32 @@
+# AScholar Application Configuration Example
+# Copy this file and fill in your actual values
+# For secrets, use environment variables or external config files
+
+spring:
+  application:
+    name: ascholar
+  
+  profiles:
+    active: dev
+  
+  config:
+    import: 
+      - optional:file:./config/application-secrets.properties
+      - optional:file:./config/application-${spring.profiles.active}.properties
+  
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:ascholar_management}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Switch@906}
+  
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${EMAIL_USERNAME:harrynwa90@gmail.com}
+    password: ${EMAIL_PASSWORD:password}
+
+app:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY:c3VwZXJTZWN1cmVKV1RTZWNyZXRLZXlBdDI1NkJpdHNGb3JTZWN1cml0eUFuZEF1dGhlbnRpY2F0aW9u}
+
+# Use environment variables for production deployment
